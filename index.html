@@ -5,26 +5,75 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tesseract</title>
+    <style>
+      body {
+        padding: 60px;
+      }
+      .input-container {
+        padding: 20px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .input-container > select {
+        margin-bottom: 10px;
+      }
+
+      .result {
+        width: 100%;
+        height: 120px;
+      }
+    </style>
   </head>
   <body>
-    <div style="display: grid; grid-template-columns: 1fr; grid-row-gap: 1em">
-      <input id="input" type="url" placeholder="image url" />
-      <img id="display" style="width: 100%;max-width: 600px;" hidden>
-      <select id="langlist" multiple style="height: 11em"></select>
-      <input id="lang" type="text" placeholder="Language" />
-      <div>
-        <button id="start">Start</button>
-        <a
-          href="https://tesseract-ocr.github.io/tessdoc/Data-Files#data-files-for-version-400-november-29-2016"
-          target="_blank"
-          >lang list</a
-        >
+    <div id="app">
+      <div class="input-container">
+        <select v-model="inputType">
+          <option v-for="it of inputTypes" :key="it.id" :value="it.id">
+            {{ it.text }}
+          </option>
+        </select>
+        <input v-if="inputType == 1" type="file" @change="upload" />
+        <input
+          v-if="inputType == 2"
+          v-model="input"
+          type="url"
+          placeholder="image url"
+        />
       </div>
+
+      <div style="display: grid; grid-template-columns: 1fr; grid-row-gap: 1em">
+        <select id="langlist" multiple style="height: 11em" v-model="lang">
+          <option v-for="it of languages" :value="it.code">
+            {{it.code}} : {{ it.lang.trim() }}
+          </option>
+        </select>
+        <label>
+          <span>识别什么语言: </span>
+          <input id="lang" type="text" placeholder="Language" v-model="lang" />
+        </label>
+        <div>
+          <button @click="start">Start</button>
+          <a
+            href="https://tesseract-ocr.github.io/tessdoc/Data-Files#data-files-for-version-400-november-29-2016"
+            target="_blank"
+            >lang list</a
+          >
+        </div>
+      </div>
+      <br />
+      <progress
+        id="p"
+        max="1"
+        :hidden="hideProgress"
+        v-model="progress"
+        style="width: 100%"
+      ></progress>
+      <br />
+      <textarea class="result">{{ result }}</textarea>
     </div>
-    <br />
-    <progress id="p" max="1" hidden style="width: 100%"></progress>
-    <br />
-    <pre id="result"></pre>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.14/vue.min.js"></script>
     <script src="https://unpkg.com/tesseract.js@v2.1.4/dist/tesseract.min.js"></script>
     <script src="index.js"></script>
   </body>

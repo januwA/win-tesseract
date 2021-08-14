@@ -12,7 +12,7 @@ function createWindow () {
   })
   mainWindow.loadFile('index.html')
   // mainWindow.loadURL("http://localhost:5500/index.html")
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 }
 
 app.whenReady().then(() => {
